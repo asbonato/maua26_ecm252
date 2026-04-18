@@ -58,7 +58,7 @@ app.post('/tarefas', async (req, res) => {
     }
 })
 
-app.put('/tarefas:id', async (req, res) => {
+app.put('/tarefas/:id', async (req, res) => {
     try {
         const { id } = req.params
         const { titulo, descricao } = req.body
@@ -66,6 +66,7 @@ app.put('/tarefas:id', async (req, res) => {
             'UPDATE tarefas'
             + ' SET titulo=?, descricao=?'
             + ' WHERE id=?'
+        console.log('SQL Update', sql)
         await conexao.query(sql, [titulo, descricao, id])
         res.json({ id, titulo, descricao })
     } catch(erro){
@@ -75,7 +76,7 @@ app.put('/tarefas:id', async (req, res) => {
     }
 })
 
-app.delete('/tarefas:id', async (req, res) => {
+app.delete('/tarefas/:id', async (req, res) => {
     try{
         const { id } = req.params
         await conexao.query('DELETE FROM tarefas WHERE id=?', [id])
