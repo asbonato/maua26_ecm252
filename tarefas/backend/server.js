@@ -66,7 +66,6 @@ app.put('/tarefas/:id', async (req, res) => {
             'UPDATE tarefas'
             + ' SET titulo=?, descricao=?'
             + ' WHERE id=?'
-        console.log('SQL Update', sql)
         await conexao.query(sql, [titulo, descricao, id])
         res.json({ id, titulo, descricao })
     } catch(erro){

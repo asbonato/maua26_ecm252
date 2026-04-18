@@ -7,6 +7,7 @@ function App(){
     const [tarefas, setTarefas] = useState([])
     const [titulo, setTitulo] = useState('')
     const [descricao, setDescricao] = useState('')
+    const [editandoId, setEditandoId] = useState(null)
 
     const buscarTarefas = async () => {
         const resposta = await axios.get(API_URL)
@@ -26,6 +27,32 @@ function App(){
         setDescricao('')
         buscarTarefas()
         return
+    }
+
+    const excluirTarefa = async (id) => {
+        await axios.delete(
+            `${API_URL}/${id}`
+        )
+        buscarTarefas()
+    }
+
+    const iniciarEdicao = (tarefa) => {
+        setEditandoId(tarefa.id)
+        setTitulo(tarefa.titulo)
+        setDescricao(tarefa.descricao || '')
+    }
+
+    const salvarEdicao = async () => {
+        if(!titulo.trim()) return
+        await axios.put(
+            `${API_URL}/${editandoId}`,
+            {titulo, descricao}
+        )
+        setEditandoId(null)
+        setTitulo('')
+        setDescricao('')
+        buscarTarefas()
+        
     }
 
     return(
@@ -50,9 +77,13 @@ function App(){
                             />
                         </div>
                         <div className="col=md-3">
-                            <button className="btn btn-primary w-100"
-                             onClick={adicionarTarefa}>
-                             Adicionar
+                            <button className={`btn ${editandoId
+                                ? 'btn-success'
+                                : 'btn-primary'} w-100`}
+                             onClick={editandoId
+                                ? salvarEdicao
+                                : adicionarTarefa}>
+                             {editandoId? 'Salvar' : 'Adicionar'}
                              </button>
                         </div>
                     </div>
@@ -71,10 +102,12 @@ function App(){
                                 </p>
                             </div>
                             <div>
-                                <button className="btn btn-warning btn=sm me-2">
+                                <button className="btn btn-warning btn=sm me-2"
+                                 onClick={() => iniciarEdicao(tarefa)}>
                                 Editar
                                 </button>
-                                <button className="btn btn-danger btn=sm me-2">
+                                <button className="btn btn-danger btn=sm me-2"
+                                 onClick={() => excluirTarefa(tarefa.id)}>
                                 Excluir
                                 </button>
                             </div>
