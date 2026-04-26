@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import EstacaoClimatica from './EstacaoClimatica'
+import Loading from './Loading'
 
 function App() {
     const [latitude, setLatitude] = useState(null)
     const [longitude, setLongitude] = useState(null)
     const [estacao, setEstacao] = useState(null)
-    const [data, setData] = useState(null)
     const [icone, setIcone] = useState(null)
     const [mensagemDeErro, setMensagemDeErro] = useState(null)
 
@@ -44,7 +45,7 @@ function App() {
                 setLatitude(posicao.coords.latitude)
                 setLongitude(posicao.coords.longitude)
                 setEstacao(est)
-                setData(dataAtual.toLocaleString())
+                //setData(dataAtual.toLocaleString())
                 setIcone(ic)
             },
             (erro) => {
@@ -54,6 +55,10 @@ function App() {
         )
     }
 
+    useEffect(() => {
+        obterLocalizacao()
+    }, [])
+
     return (
         //responsividade, margem acima
         <div className="container mt-2">
@@ -61,38 +66,23 @@ function App() {
             <div className="row justify-content-center">
                 {/* 8 colunas em telas médias em diante */}
                 <div className='col-md-8'>
-                    {/* um cartão Bootstrap */}
-                    <div className='card'>
-                        {/* corpo do cartão */}
-                        <div className='card-body'>
-                            {/* centraliza verticalmente, margem abaixo */}
-                            <div className='d-flex align-items-center 
-                                            border rounded mb-2' 
-                                 style={{height: '6rem'}}>
-                                {/* ícone obtido do estado */}
-                                <i className={`fas fa-5x ${icone}`}></i>
-                                {/* largura 75%, margem a esquerda */}
-                                <p className='w-75 ms-3 text-center fs-1'>
-                                    {estacao}
-                                </p>
-                            </div>
-                            <div>
-                                <p className="text-center">
-                                    {
-                                        latitude
-                                        ? `Coordenadas: ${latitude}, ${longitude}. Data: ${data}`
-                                        : mensagemDeErro
-                                          ? mensagemDeErro
-                                          : 'Clique no botão para saber sua estação climática.'
-                                    }
-                                </p>
-                            </div>
-                            <button className='btn btn-outline-primary w-100 mt-2'
-                                    onClick={obterLocalizacao}>
-                                    Qual a minha estação?
-                            </button>
-                        </div>
-                    </div>
+                { 
+                    (!latitude && !mensagemDeErro)
+                    ? <Loading mensagem= "Por favor, responda à
+                                         solicitação de localização."
+                    />
+                    :mensagemDeErro
+                        ? <p className="border rounded p-2 fs-4 text-center">
+                            É preciso dar permissão para acesso à localização.
+                            Atualize a página e tente novamente.
+                        </p>
+                        : <EstacaoClimatica 
+                            icone = {icone}
+                            estacao= {estacao}
+                            latitude = {latitude}
+                            longitude = {longitude}
+                            obterLocalizacao={obterLocalizacao}/>
+                } 
                 </div>  
             </div>
         </div>
