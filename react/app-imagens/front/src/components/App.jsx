@@ -1,27 +1,14 @@
 import { Component } from 'react'
 import Busca from './Busca'
-//import { createClient } from 'pexels'
 import ListaImagens from './ListaImagens'
 import PexelsLogo from './PexelsLogo'
-import pexelsClient from '../utils/pexelsClient'
+import axios from 'axios'
 
 export default class App extends Component {
-  pexelsClient = null
   state = {pics: []}
 
-  // componentDidMount(){
-  //   this.pexelsClient = createClient(import.meta.env.VITE_PEXELS_KEY)
-  // }
-
-  // onBuscaRealizada = (termo) => {
-  //   this.pexelsClient.photos.search({
-  //     query: termo
-  //   })
-  //   .then(pics => this.setState({pics: pics.photos}))
-  // }
-
-  onBuscaRealizada = (termo) => {
-    pexelsClient.get('/search', {
+  onBuscaRealizada = async (termo) => {
+      await axios.get('http://localhost:3000/search', {
       params: {query: termo}
     })
     .then(result => {
