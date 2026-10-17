@@ -50,7 +50,6 @@ import 'package:exibe_imagens/src/models/image_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import 'models/image_model.dart';
 import 'widgets/image_list.dart';
 
 class App extends StatefulWidget {
@@ -62,7 +61,7 @@ class App extends StatefulWidget {
 
 class AppState extends State<App> {
   //começamos de 1, pois não há página 0 na Pexels
-  int numeroImagens = 0;
+  int numeroImagens = 1;
   List<ImageModel> imagens = [];
 
   void obterImagem() async {
