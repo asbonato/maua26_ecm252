@@ -1,7 +1,54 @@
+// =============================================================================
+// Uso de variáveis de ambiente (.env) no Flutter
+// =============================================================================
+// A chave da API da Pexels não fica escrita no código. Ela é lida de um
+// arquivo .env, que não vai para o repositório. Passos seguidos:
+//
+// 1. Dependência: foi adicionado o pacote flutter_dotenv no pubspec.yaml
+//      dependencies:
+//        flutter_dotenv: ^6.0.1
+//    e depois executado: flutter pub get
+//
+// 2. Arquivo .env: criado na raiz do projeto (ao lado do pubspec.yaml):
+//      PEXELS_API_KEY=sua_chave_aqui
+//    O arquivo .env.example tem o mesmo formato, sem a chave real, e serve
+//    de modelo para quem clonar o projeto (basta copiá-lo para .env).
+//
+// 3. .gitignore: as entradas abaixo impedem que a chave vá para o Git,
+//    mas mantêm o .env.example versionado:
+//      .env
+//      .env.*
+//      !.env.example
+//
+// 4. Asset: no Flutter o .env precisa ser declarado como asset no
+//    pubspec.yaml, senão ele não é empacotado com o app e não é encontrado
+//    em tempo de execução:
+//      flutter:
+//        assets:
+//          - .env
+//
+// 5. Carregamento: em main.dart o arquivo é carregado antes de runApp.
+//    Por isso main é async e usa await:
+//      Future<void> main() async {
+//        await dotenv.load(fileName: '.env');
+//        runApp(App());
+//      }
+//
+// 6. Leitura: aqui no app.dart o valor é obtido com
+//      dotenv.env['PEXELS_API_KEY'] ?? ''
+//    O "?? ''" evita null caso a variável não exista no .env.
+//
+// Observação: como o .env vira um asset, ele fica dentro do pacote do app
+// (APK/IPA/web). Isso evita expor a chave no repositório, mas não a protege
+// de quem tem o app instalado. Em produção, o ideal é que a chamada à API
+// passe por um backend próprio que guarde a chave.
+// =============================================================================
+
 import 'dart:convert';
 
 import 'package:exibe_imagens/src/models/image_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'models/image_model.dart';
 import 'widgets/image_list.dart';
@@ -28,7 +75,7 @@ class AppState extends State<App> {
     var req = http.Request('get', url);
     req.headers.addAll(
       {
-        'Authorization':'cole aqui a sua chave de api'
+        'Authorization': dotenv.env['PEXELS_API_KEY'] ?? ''
       },
     );
     final result = await req.send();
