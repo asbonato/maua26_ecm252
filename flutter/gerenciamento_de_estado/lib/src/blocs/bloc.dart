@@ -18,4 +18,5 @@ class Bloc with Validators{
   }
 }
 
-final bloc = Bloc();
+//não usaremos mais a instância global do bloc
+//final bloc = Bloc();
